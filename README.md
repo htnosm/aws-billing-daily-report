@@ -7,6 +7,12 @@ Use CloudWatch Metrics **Billing** data to notify Slack.
 Must be enabled the monitoring of estimated charges for your AWS account.
 
 
+## Requirements
+
+* [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+* python 3.8+
+* [slackweb · PyPI](https://pypi.org/project/slackweb/)
+
 ## Installation
 
 ```
@@ -37,7 +43,6 @@ sam deploy --guided
 ## Notification example
 
 ```
-forIncomingWebhookAPP  9:00 AM
 EstimatedCharges DailyReport
 
 * yyyy/mm/dd hh:mm:ss UTC - yyyy/mm/dd hh:mm:ss UTC
