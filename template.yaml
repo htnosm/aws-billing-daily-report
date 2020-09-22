@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  aws-billing-daily-report
+
+Parameters:
+  SlackWebhookURL:
+    Type: String
+  SlackChannel:
+    Type: String
+  SlackUsername:
+    Type: String
+    Default: "aws-billing-daily-report"
+  SlackIconEmoji:
+    Type: String
+    Default: ":money_with_wings:"
+  SlackColor:
+    Type: String
+    Default: "#008000" # green
+  SlackTitle:
+    Type: String
+    Default: "EstimatedCharges DailyReport"
+
+Resources:
+  DailyReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: daily_report/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      MemorySize: 128
+      Timeout: 60
+      Environment:
+        Variables:
+          SlackWebhookURL: !Ref SlackWebhookURL
+          SlackChannel: !Ref SlackChannel
+          SlackUsername: !Ref SlackUsername
+          SlackIconEmoji: !Ref SlackIconEmoji
+          SlackColor: !Ref SlackColor
+          SlackTitle: !Ref SlackTitle
+      Events:
+        Daily:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 0 * * ? *)
+            Enabled: True
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cloudwatch:ListMetrics
+                - cloudwatch:GetMetricData
+              Resource: "*"
+
+  DailyReportFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${DailyReportFunction}
+      RetentionInDays: 365
