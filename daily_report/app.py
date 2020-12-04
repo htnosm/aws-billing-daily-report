@@ -36,6 +36,7 @@ def post_slack(message):
 
 
 def cw_get_metric_data_diff(client, dimensions, start_time, end_time, period=86400, stat='Maximum'):
+    print(f"dimensions: {dimensions}")
     response = client.get_metric_data(
         MetricDataQueries=[
             {
@@ -58,17 +59,24 @@ def cw_get_metric_data_diff(client, dimensions, start_time, end_time, period=864
     )
 
     data = response['MetricDataResults'][0]
-    bef = data['Values'][0]
-    aft = data['Values'][1]
-    diff = round(data['Values'][1] - data['Values'][0], 2)
-    if diff < 0:
-        diff = "-"
+    print(f"values: {data['Values']}")
+    if len(data['Values']) == 2:
+        diff = round(data['Values'][1] - data['Values'][0], 2)
+        if diff < 0:
+            diff = '-'
+        output = {
+            'bef': data['Values'][0],
+            'aft': data['Values'][1],
+            'diff': diff,
+        }
+    else:
+        output = {
+            'bef': 0,
+            'aft': 0,
+            'diff': '-',
+        }
 
-    return {
-        'bef': bef,
-        'aft': aft,
-        'diff': diff,
-    }
+    return output
 
 
 def cw_list_metrics(client):
