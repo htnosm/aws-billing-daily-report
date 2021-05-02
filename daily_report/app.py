@@ -63,7 +63,7 @@ def cw_get_metric_data_diff(client, dimensions, start_time, end_time, period=864
     if len(data['Values']) == 2:
         diff = round(data['Values'][1] - data['Values'][0], 2)
         if diff < 0:
-            diff = '-'
+            diff = 0
         output = {
             'bef': data['Values'][0],
             'aft': data['Values'][1],
@@ -73,7 +73,7 @@ def cw_get_metric_data_diff(client, dimensions, start_time, end_time, period=864
         output = {
             'bef': 0,
             'aft': 0,
-            'diff': '-',
+            'diff': 0,
         }
 
     return output
@@ -147,6 +147,10 @@ def lambda_handler(event, context):
         for dimension in dimensions:
             if dimension['Name'] == 'ServiceName':
                 row['service'] = dimension['Value']
+            if dimension['Name'] == 'LinkedAccount':
+                row['linked_account'] = dimension['Value']
+        if 'linked_account' in row:
+            continue
 
         response = cw_get_metric_data_diff(cw, dimensions, since, until)
         row.update(response)
