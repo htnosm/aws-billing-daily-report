@@ -16,7 +16,7 @@ Must be enabled the monitoring of estimated charges for your AWS account.
 ## Installation
 
 ```
-sam build
+sam build -u
 sam deploy --guided
 ```
 
