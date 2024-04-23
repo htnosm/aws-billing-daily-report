@@ -27,7 +27,8 @@ Resources:
     Properties:
       CodeUri: daily_report/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Architectures: ["arm64"]
+      Runtime: python3.12
       MemorySize: 128
       Timeout: 300
       AutoPublishAlias: live
@@ -58,7 +59,8 @@ Resources:
 
   DailyReportFunctionLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${DailyReportFunction}
-      RetentionInDays: 365
+      RetentionInDays: 7
